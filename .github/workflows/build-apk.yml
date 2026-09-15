@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android APK (Release Slim)
 
 on:
   push:
@@ -23,11 +23,11 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    - name: Build with Gradle
-      run: ./gradlew assembleDebug --stacktrace
+    - name: Build Arm64 Release APK
+      run: ./gradlew assembleRelease --stacktrace
 
-    - name: Upload APK Artifact
+    - name: Upload Arm64 APK Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: TalkifyTTS-Custom-Debug-APK
-        path: app/build/outputs/apk/debug/*.apk
+        name: TalkifyTTS-arm64-v8a-release
+        path: app/build/outputs/apk/release/*arm64-v8a*.apk
