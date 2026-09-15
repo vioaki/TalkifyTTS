@@ -417,6 +417,28 @@ private fun buildConfigItems(
                     )
                 )
             }
+            val voiceIdLabel = getLabel("voice_id") ?: "音色 ID (Voice ID / Speaker)"
+            items.add(
+                ConfigItem(
+                    key = "voice_id",
+                    label = voiceIdLabel,
+                    value = config.voiceId,
+                    placeholder = "如 S_F2CfU67P1 (可自定义填入)",
+                    supportingText = "支持填入火山引擎官方音色或专属克隆音色 ID (S_开头)",
+                    isPassword = false
+                )
+            )
+            val modelIdLabel = getLabel("model_id") ?: "模型 / 资源 ID (Resource ID)"
+            items.add(
+                ConfigItem(
+                    key = "model_id",
+                    label = modelIdLabel,
+                    value = config.modelId,
+                    placeholder = "默认留空，S_开头音色自动识别为 seed-icl-2.0",
+                    supportingText = "常用: seed-tts-2.0 或 seed-icl-2.0",
+                    isPassword = false
+                )
+            )
         }
         is TencentCloudConfig -> {
             val appIdLabel = getLabel("app_id")
@@ -610,11 +632,13 @@ private fun buildConfigFromItems(
         }
         is VolcengineConfig -> {
             val apiKey = items.find { it.key == "api_key" }?.value ?: ""
+            val customVoiceId = items.find { it.key == "voice_id" }?.value ?: voiceId
+            val customModelId = items.find { it.key == "model_id" }?.value ?: modelId
             VolcengineConfig(
                 apiKey = apiKey,
-                voiceId = voiceId,
+                voiceId = customVoiceId,
                 apiUrl = apiUrl,
-                modelId = modelId
+                modelId = customModelId
             )
         }
         is TencentCloudConfig -> {

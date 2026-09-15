@@ -123,7 +123,9 @@ class VolcengineProvider : HttpStreamingTtsProvider() {
         val body = requestBody.toString().toRequestBody(mediaType)
 
         val effectiveApiUrl = volcConfig.apiUrl.ifBlank { DEFAULT_API_URL }
-        val effectiveResourceId = volcConfig.modelId.ifBlank { getDefaultModelId() }
+        val effectiveResourceId = volcConfig.modelId.ifBlank {
+            if (voiceId.startsWith("S_")) "seed-icl-2.0" else getDefaultModelId()
+        }
 
         val request = Request.Builder()
             .url(effectiveApiUrl)
