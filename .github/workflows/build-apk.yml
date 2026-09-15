@@ -1,4 +1,4 @@
-name: Build Android APK (Release Slim)
+name: Build Android APK (Official Flow)
 
 on:
   push:
@@ -20,14 +20,27 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    - name: Build Arm64 Release APK
-      run: ./gradlew assembleRelease --stacktrace
+    - name: Build Release APK
+      run: ./gradlew assembleRelease
 
-    - name: Upload Arm64 APK Artifact
+    - name: Sign APK (Debug Keystore)
+      run: |
+        for apk in app/build/outputs/apk/release/*-unsigned.apk; do
+          if [ -f "$apk" ]; then
+            signed_apk="${apk%-unsigned.apk}.apk"
+            echo "Signing $apk -> $signed_apk"
+            $ANDROID_HOME/build-tools/34.0.0/apksigner sign --ks ~/.android/debug.keystore --ks-key-alias androiddebugkey --ks-pass pass:android --key-pass pass:android --out "$signed_apk" "$apk"
+          fi
+        done
+
+    - name: Upload arm64-v8a APK
       uses: actions/upload-artifact@v4
       with:
-        name: TalkifyTTS-arm64-v8a-release
+        name: TalkifyTTS-arm64-v8a
         path: app/build/outputs/apk/release/*arm64-v8a*.apk
